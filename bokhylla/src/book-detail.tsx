@@ -55,7 +55,7 @@ export default function BookDetail() {
     <div className="flex gap-4">
       {coverId && (
         <img
-          src={`https://covers.openlibrary.org/b/id/${book.covers[0]}-L.jpg`}
+          src={`https://covers.openlibrary.org/b/id/${coverId}-L.jpg`}
           alt={book.title}
           className="h-64"
         />
