@@ -78,7 +78,7 @@ function ReviewForm({ book }: { book: BookInfo }) {
 }
 
 export default function ReadingList() {
-  const { readingList, removeBook } = useOutletContext<AppContext>();
+  const { readingList, removeBook, clearList } = useOutletContext<AppContext>();
   const books = Object.values(readingList);
 
   if (books.length === 0) {
@@ -95,6 +95,21 @@ export default function ReadingList() {
 
   return (
     <div className="grid gap-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm">{books.length} böcker i listan</p>
+        <button
+          type="button"
+          onClick={() => {
+            if (window.confirm("Vill du ta bort alla böcker från läslistan?")) {
+              clearList();
+            }
+          }}
+          className="rounded border px-3 py-1 text-sm"
+        >
+          Rensa listan
+        </button>
+      </div>
+
       {books.map((book) => (
         <div
           key={book.id}

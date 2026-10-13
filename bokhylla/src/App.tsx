@@ -39,6 +39,10 @@ function App() {
     setReadingList({ ...readingList, [id]: { ...book, rating, note } },);
   }
 
+  function clearList() {
+    setReadingList({});
+  }
+
   return (
     <div className="grid max-w-4xl grid-rows-1 gap-4">
       <h1 className="text-center text-3xl font-bold md:w-4xl">Bokhyllan</h1>
@@ -48,7 +52,7 @@ function App() {
         <Link to="/list">Min läslista ({Object.keys(readingList).length})</Link>
       </nav>
 
-      <Outlet context={{ readingList, addBook, removeBook, saveReview }} />
+      <Outlet context={{ readingList, addBook, removeBook, saveReview, clearList }} />
     </div>
   );
 }

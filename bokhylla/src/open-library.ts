@@ -2,6 +2,7 @@ export async function searchBooks(query: string) {
   const response = await fetch(
     `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}`
   );
+  if (!response.ok) throw new Error("fetch-failed");
   return response.json();
 }
 
