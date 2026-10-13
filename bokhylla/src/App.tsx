@@ -14,10 +14,10 @@ function App() {
     setReadingList(rest);
   }
 
-  function saveReview(id: string, rating: number | undefined, note: string) {
+  function saveReview(id: string, rating: number | undefined) {
     const book = readingList[id];
     if (!book) return;
-    setReadingList({ ...readingList, [id]: { ...book, rating, note } });
+    setReadingList({ ...readingList, [id]: { ...book, rating} });
   }
 
   return (
