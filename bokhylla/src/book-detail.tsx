@@ -15,7 +15,7 @@ export default function BookDetail() {
     setFacts(null);
     setError("");
 
-    Promise.all([getBook(id), getBookFacts(id)])
+    Promise.all([getBook(id), getBookFacts(id).catch(() => null)])
       .then(([bookData, factsData]) => {
         if (ignore) return;
         setBook(bookData);
@@ -49,9 +49,11 @@ export default function BookDetail() {
       ? book.description
       : book.description?.value;
 
+  const coverId: number | undefined = book.covers?.find((c : number) => c > 0);
+
   return (
     <div className="flex gap-4">
-      {book.covers?.[0] && (
+      {coverId && (
         <img
           src={`https://covers.openlibrary.org/b/id/${book.covers[0]}-L.jpg`}
           alt={book.title}

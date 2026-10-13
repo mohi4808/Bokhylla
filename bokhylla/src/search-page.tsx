@@ -69,6 +69,8 @@ export default function SearchPage() {
         </div>
       )}
 
+      {error && <p role="alert">{error}</p>}
+
       {!loading && !error && query && books.length === 0 && (
         <p>Inga böcker hittades för "{query}".</p>
       )}
