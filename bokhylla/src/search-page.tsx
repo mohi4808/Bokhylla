@@ -10,37 +10,36 @@ export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const query = searchParams.get("q") ?? "";
-
   const [text, setText] = useState(query);
-  const [books, setBooks] = useState<BookInfo[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
+  const [result, setResult] = useState<{
+    query: string;
+    books: BookInfo[];
+    failed: boolean;
+  } | null>(null);
 
   useEffect(() => {
-    if (!query) {
-      setBooks([]);
-      return;
-    }
+    if (!query) return;
     let ignore = false;
-    setLoading(true);
-    setError("");
-    setBooks([])
 
     searchBooks(query)
       .then((data) => {
-        if (!ignore) setBooks(parseSearch(data));
+        if (!ignore)
+          setResult({ query, books: parseSearch(data), failed: false });
       })
       .catch(() => {
-        if (!ignore) setError("Sökningen misslyckades. Försök igen.");
-      })
-      .finally(() => {
-        if (!ignore) setLoading(false);
+        if (!ignore) setResult({ query, books: [], failed: true });
       });
 
     return () => {
       ignore = true;
     };
   }, [query]);
+
+  const current = result?.query === query ? result : null;
+  const books = current?.books ?? [];
+  const error = current?.failed ? "Sökningen misslyckades. Försök igen." : "";
+  const loading = query !== "" && current === null;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

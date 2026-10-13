@@ -9,6 +9,7 @@ function loadReadingList(): ReadingListMap {
     const stored = localStorage.getItem(STORAGE_KEY);
     return stored ? JSON.parse(stored) : {};
   } catch {
+    //
     return {};
   }
 }
@@ -21,6 +22,7 @@ function App() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(readingList));
     } catch {
+      //
     }
   }, [readingList]);
 
@@ -29,7 +31,8 @@ function App() {
   }
 
   function removeBook(id: string) {
-    const { [id]: _removed, ...rest } = readingList;
+    const rest = { ...readingList };
+    delete rest[id];
     setReadingList(rest);
   }
 
