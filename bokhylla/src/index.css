@@ -169,6 +169,30 @@
   --shadow-2xl: var(--shadow-2xl);
 }
 
+a:link {
+  color: rgb(18, 57, 196);
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:visited {
+  color: blue;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:hover {
+  color: rgb(0, 242, 255);
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+a:active {
+  color: yellow;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
 /*
   Do not remove the lines bellow if you change the theme.
 */
