@@ -1,21 +1,20 @@
 import { Link, useOutletContext } from "react-router";
 import type { AppContext, BookInfo } from "./types";
 import React, { useState } from "react";
-import BookDetail from "./book-detail";
 
-
-function ReviewForm({ book }: { book: BookInfo}){
+function ReviewForm({ book }: { book: BookInfo }) {
   const { saveReview } = useOutletContext<AppContext>();
   const [rating, setRating] = useState(book.rating?.toString() ?? "");
+  const [note, setNote] = useState(book.note ?? "");
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
 
-  function handleSubmit(e: React.FormEvent){
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaved(false);
 
-    if (rating === ""){
-      saveReview(book.id, undefined);
+    if (rating === "") {
+      saveReview(book.id, undefined, note);
       setError("");
       setSaved(true);
       return;
@@ -28,13 +27,15 @@ function ReviewForm({ book }: { book: BookInfo}){
     }
 
     setError("");
-    saveReview(book.id, value);
+    saveReview(book.id, value, note);
     setSaved(true);
   }
 
   return (
     <form onSubmit={handleSubmit} noValidate className="grid gap-2">
-      <label htmlFor={`rating-${book.id}`}>Betyg (1-5)</label>
+      <label htmlFor={`rating-${book.id}`} className="text-sm font-medium">
+        Betyg (1-5)
+      </label>
       <input
         id={`rating-${book.id}`}
         type="number"
@@ -44,69 +45,96 @@ function ReviewForm({ book }: { book: BookInfo}){
           setSaved(false);
         }}
         aria-invalid={error !== ""}
-        className="w-20 border px-2 py-1"
-        />
-        {error && <p role="alert">{error}</p>}
+        className="w-20 rounded border bg-transparent px-2 py-1"
+      />
+      {error && (
+        <p role="alert" className="text-sm text-red-500">
+          {error}
+        </p>
+      )}
 
-        <button type="submit" className="self-start border px-3 py-1">
+      <label htmlFor={`note-${book.id}`} className="text-sm font-medium">
+        Anteckning
+      </label>
+      <textarea
+        id={`note-${book.id}`}
+        value={note}
+        onChange={(e) => {
+          setNote(e.target.value);
+          setSaved(false);
+        }}
+        rows={3}
+        className="rounded border bg-transparent px-2 py-1"
+      />
+
+      <div className="flex items-center gap-3">
+        <button type="submit" className="rounded border px-3 py-1">
           Spara
         </button>
-        {saved && <p>Sparat!</p>}
+        {saved && <p className="text-sm text-green-500">Sparat!</p>}
+      </div>
     </form>
   );
 }
 
 export default function ReadingList() {
-  const {readingList, removeBook} = useOutletContext<AppContext>();
+  const { readingList, removeBook } = useOutletContext<AppContext>();
   const books = Object.values(readingList);
 
-  console.log(readingList);
-  
-  if (books.length === 0){
+  if (books.length === 0) {
     return (
       <p>
-        Din läslista är tom. <Link to="/">Sök efter böcker</Link> för att lägga till några.
+        Din läslista är tom.{" "}
+        <Link to="/" className="underline">
+          Sök efter böcker
+        </Link>{" "}
+        för att lägga till några.
       </p>
     );
   }
 
   return (
-    <table className="w-full text-left">
-      <thead>
-        <tr>
-          <th>Titel</th>
-          <th>Författare</th>
-          <th>År</th>
-          <th>Betyg</th>
-          <th></th>
-        </tr>
-      </thead>
+    <div className="grid gap-4">
+      {books.map((book) => (
+        <div
+          key={book.id}
+          className="grid gap-4 rounded-lg border p-4 md:grid-cols-[auto_1fr_1.5fr]"
+        >
+          {book.coverId ? (
+            <img
+              src={`https://covers.openlibrary.org/b/id/${book.coverId}-M.jpg`}
+              alt={book.title}
+              className="h-44 w-28 rounded object-cover"
+            />
+          ) : (
+            <div className="flex h-44 w-28 items-center justify-center rounded border text-center text-xs text-muted-foreground">
+              Inget omslag
+            </div>
+          )}
 
-      <tbody>
-        {books.map((book) =>(
-          <tr key={book.id}>
-            <td>
-              <Link to={`/book/${book.id}`}>{book.title}</Link>
-            </td>
-            <td>{book.author}</td>
-            <td>{book.year}</td>
-            <td>
-              <ReviewForm book={book}></ReviewForm>
-            </td>
-            <td>
-              <button
+          <div className="flex flex-col justify-between gap-2">
+            <div>
+              <Link
+                to={`/book/${book.id}`}
+                className="text-lg font-semibold underline"
+              >
+                {book.title}
+              </Link>
+              {book.author && <p className="text-sm">{book.author}</p>}
+              {book.year && <p className="text-sm">{book.year}</p>}
+            </div>
+            <button
               type="button"
               onClick={() => removeBook(book.id)}
-              className="border px-3 py-1">
-                Ta bort
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+              className="self-start rounded border px-3 py-1 text-sm"
+            >
+              Ta bort
+            </button>
+          </div>
 
-  )
+          <ReviewForm book={book} />
+        </div>
+      ))}
+    </div>
+  );
 }
-
-

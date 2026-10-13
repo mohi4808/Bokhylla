@@ -1,12 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, Outlet } from "react-router";
 import type { BookInfo, ReadingListMap } from "./types";
 
+const STORAGE_KEY = "bokhyllan-readinglist";
+
+function loadReadingList(): ReadingListMap {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : {};
+  } catch {
+    return {};
+  }
+}
+
 function App() {
-  const [readingList, setReadingList] = useState<ReadingListMap>({});
+  const [readingList, setReadingList] = useState<ReadingListMap>(loadReadingList);
+
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(readingList));
+    } catch {
+    }
+  }, [readingList]);
 
   function addBook(book: BookInfo) {
-    setReadingList({ ...readingList, [book.id]: book });
+    setReadingList({ ...readingList, [book.id]: book, });
   }
 
   function removeBook(id: string) {
@@ -14,10 +33,10 @@ function App() {
     setReadingList(rest);
   }
 
-  function saveReview(id: string, rating: number | undefined) {
+  function saveReview(id: string, rating: number | undefined, note: string) {
     const book = readingList[id];
     if (!book) return;
-    setReadingList({ ...readingList, [id]: { ...book, rating} });
+    setReadingList({ ...readingList, [id]: { ...book, rating, note } },);
   }
 
   return (
