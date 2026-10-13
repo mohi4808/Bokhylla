@@ -1,6 +1,7 @@
 export async function searchBooks(query: string) {
   const response = await fetch(
-    `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}`
+    `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=20&fields=key,title,author_name,first_publish_year,cover_i`,
+    { signal: AbortSignal.timeout(45000) }
   );
   if (!response.ok) throw new Error("fetch-failed");
   return response.json();

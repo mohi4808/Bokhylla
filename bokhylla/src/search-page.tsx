@@ -24,6 +24,7 @@ export default function SearchPage() {
     let ignore = false;
     setLoading(true);
     setError("");
+    setBooks([])
 
     searchBooks(query)
       .then((data) => {
